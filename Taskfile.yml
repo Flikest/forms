@@ -1,0 +1,27 @@
+version: '3'
+
+vars:
+  STARTING_MESSAGE: 🚀 start all services
+  ALL_SERVICES_ARE_RUNNING: ✅ all services are running
+  RUNNING_TESTS: 🔍 running tests
+  TESTING_COMPLITED: 💯 testing completed
+
+tasks:
+  dev-up:
+    cmds:
+      - echo "{{.STARTING_MESSAGE}}"
+      - docker-compose --env-file y-forms/local.env up -d
+      - echo "{{.RUNNING_TESTS}}"
+      - npm run test:spec
+      - echo "{{.TESTING_COMPLITED}}"
+      - npm run start:dev
+      - echo "{{.ALL_SERVICES_ARE_RUNNING}}"
+  prod-up:
+    cmds:
+      - echo "{{.STARTING_MESSAGE}}"
+      - docker-compose --env-file y-forms/local.env up -d
+      - echo "{{.RUNNING_TESTS}}"
+      - npm run test:spec
+      - echo "{{.TESTING_COMPLITED}}"
+      - npm run start:prod
+      - echo "{{.ALL_SERVICES_ARE_RUNNING}}"

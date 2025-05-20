@@ -1,0 +1,21 @@
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: y_forms_postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - ${PG_PORT}:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 5gb
+        reservations:
+          cpus: '0.25'
+          memory: 1gb
