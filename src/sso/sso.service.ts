@@ -14,12 +14,14 @@ export class SsoService{
     ){};
 
     async CreateUser(body: User): Promise<InsertResult>{
-        body.id = randomUUID();
-
         const hash = genSaltSync(12);
         body.password = hashSync(body.password, hash);
 
         return await this.UserRepository.insert(body);
+    };
+
+    async GetUser(id: UUID): Promise<User>{
+        return await this.UserRepository.findOneBy({id: id})
     };
 
     async UserLogIn(body: User): Promise<Map<string, string>> {

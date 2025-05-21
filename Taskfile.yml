@@ -10,7 +10,9 @@ tasks:
   dev-up:
     cmds:
       - echo "{{.STARTING_MESSAGE}}"
-      - docker-compose --env-file y-forms/local.env up -d
+      - docker-compose --env-file y-forms/.env.dev up -d
+      - echo "create migrations"
+      - npx make_migrate
       - echo "{{.RUNNING_TESTS}}"
       - npm run test:spec
       - echo "{{.TESTING_COMPLITED}}"
@@ -19,7 +21,9 @@ tasks:
   prod-up:
     cmds:
       - echo "{{.STARTING_MESSAGE}}"
-      - docker-compose --env-file y-forms/local.env up -d
+      - docker-compose --env-file y-forms/.env.local up -d
+      - echo "create migrations"
+      - npm run migration:run
       - echo "{{.RUNNING_TESTS}}"
       - npm run test:spec
       - echo "{{.TESTING_COMPLITED}}"

@@ -12,7 +12,7 @@ export enum formTypes{
 
 @Entity()
 export class Forms{
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     @ManyToOne(() => User, user => user.id)
     @OneToMany(() => FormFields, formFields => formFields.id)
     @Index()

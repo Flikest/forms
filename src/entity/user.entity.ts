@@ -4,7 +4,7 @@ import { Forms } from "./forms.entity";
 
 @Entity()
 export class User{
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     @OneToMany(() => Forms, forms => forms.id )
     @Index()
     id: UUID
