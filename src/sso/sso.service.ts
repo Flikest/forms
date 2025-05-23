@@ -10,22 +10,22 @@ import { sign } from "jsonwebtoken"
 export class SsoService{
     constructor(
         @InjectRepository(User)
-        private UserRepository: Repository<User>
+        private userRepository: Repository<User>
     ){};
 
     async CreateUser(body: User): Promise<InsertResult>{
         const hash = genSaltSync(12);
         body.password = hashSync(body.password, hash);
 
-        return await this.UserRepository.insert(body);
+        return await this.userRepository.insert(body);
     };
 
     async GetUser(id: UUID): Promise<User>{
-        return await this.UserRepository.findOneBy({id: id})
+        return await this.userRepository.findOneBy({id: id})
     };
 
     async UserLogIn(body: User): Promise<Map<string, string>> {
-        const user:User = await this.UserRepository.findOneBy(
+        const user:User = await this.userRepository.findOneBy(
             {
                 logIn: body.logIn
             }
@@ -55,7 +55,7 @@ export class SsoService{
     };
 
     async UpdateUser(body: User){
-        const user: User = await this.UserRepository.findOneBy({logIn: body.logIn});
+        const user: User = await this.userRepository.findOneBy({logIn: body.logIn});
 
         const isNewPass: boolean = await compareSync(body.password, user.password);
 
@@ -64,10 +64,10 @@ export class SsoService{
             body.password = hashSync(body.password, hash);
         };
 
-        return await this.UserRepository.save(body)
+        return await this.userRepository.save(body)
     };
 
     async DeleteUser(id: UUID){
-        return await this.UserRepository.delete({id: id});
+        return await this.userRepository.delete({id: id});
     };
 }

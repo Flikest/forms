@@ -19,6 +19,7 @@ export class FormsController{
         try{
             return this.formsService.CreateForm(body)
         }catch{
+            this.logger.error("error with creating forms")
             return "incorrect data"
         }
     }
@@ -54,7 +55,6 @@ export class FormsController{
         }catch{
             return "incorrect data"
         }
-        return await this.formsService.DeleteForm(id)
     }
 
 }

@@ -8,6 +8,8 @@ import { SsoController } from './sso/sso.controller';
 import { postgresConnection } from './db.connection';
 import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
 import { LoggerModule } from 'nestjs-pino';
+import { FormFieldsModule } from './form-fields/form-fields.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { LoggerModule } from 'nestjs-pino';
       migrations: ["/entity/"],
       synchronize: false,
     }),
+    FormFieldsModule,
+    AnswerModule,
   ],
   controllers: [AppController, SsoController],
   providers: [AppService, SsoService],

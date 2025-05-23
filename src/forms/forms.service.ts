@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UUID } from "crypto";
 import { PinoLogger } from "nestjs-pino";
-import { FormFields, Forms } from "src/entity/forms.entity";
-import AppDataSource from "src/typeorm.config";
-import { createQueryBuilder, DeleteResult, FindOptionsWhere, InsertResult, QueryBuilder, Repository, UpdateResult } from "typeorm";
+import { title } from "process";
+import { filter } from "rxjs";
+import { FormsEntity } from "src/entity/forms.entity";
+import { DeleteResult, FindOptionsWhere, InsertResult, Repository, UpdateResult } from "typeorm";
 
 export type formRequest = {
     creator_id: UUID
@@ -16,8 +17,8 @@ export type formRequest = {
 @Injectable()
 export class FormsService{
     constructor(
-        @InjectRepository(Forms)
-        private readonly formsRepository: Repository<Forms>,
+        @InjectRepository(FormsEntity)
+        private readonly formsRepository: Repository<FormsEntity>,
         private readonly logger: PinoLogger,
     ){
         this.logger.setContext(FormsService.name);
@@ -34,28 +35,25 @@ export class FormsService{
         };
     };
 
-    async GetForms(filters: {id?: UUID, title?: string}){
+    async GetForms(filters: {id?: string, title?: string}){
         try{
-            const aqb = AppDataSource.createQueryBuilder(Forms, "forms", FormFields, "forms_field");
+            const idReturned: boolean = !!filters.id
+            const titleReturned: boolean = !!filters.title
 
-            const whereConditions: FindOptionsWhere<Forms> = {};
-
-            if (filters.id) {
-                whereConditions.id = filters.id;
-            };
-
-            if (filters.title) {
-                whereConditions.title = filters.title;
-            };
+            this.formsRepository.find({
+                where: {
+                    id: filters.id,
+                    title: filters.title
+                },
+                relations: {
+                    formfields: true,
+                }
+            })
 
             
+            
 
-            const results = aqb
-                .innerJoinAndSelect("", "")
-                .where("");
-            this.logger.info(results);
-
-            return results;
+            
         }catch(error){
             this.logger.error("error with getting forms: ", error);
         };

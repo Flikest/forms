@@ -1,7 +1,12 @@
-import { UUID } from "crypto";
-import { Column, Entity, Index, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UsingJoinColumnIsNotAllowedError } from "typeorm";
-import { User } from "./user.entity";
-
+import { 
+    Column,
+    Entity,
+    Index, 
+    JoinColumn,  
+    ManyToOne, 
+    OneToMany, 
+    PrimaryGeneratedColumn,  
+} from "typeorm";
 
 export enum formTypes{
     text = "text",
@@ -10,32 +15,36 @@ export enum formTypes{
 };
 
 
-@Entity()
-export class Forms{
+@Entity({name: "forms"})
+export class FormsEntity{
     @PrimaryGeneratedColumn("uuid")
-    @ManyToOne(() => User, user => user.id)
-    @OneToMany(() => FormFields, formFields => formFields.id)
     @Index()
-    id: UUID
-
+    id: string
+    
     @Column({ nullable: false })
-    creator_id: UUID
-
+    creator_id: string
+    
     @Column({ nullable: false })
     @Index()
     title: string
-
+    
     @Column({ nullable: false })
     description: string
+
+    @OneToMany(() => FormFieldsEntity, formFieldsEntity => formFieldsEntity.form)
+    formfields: FormFieldsEntity[]
 };
 
-@Entity()
-export class FormFields{
-    @PrimaryGeneratedColumn()
-    @ManyToOne(() => Forms, forms => forms.id)
-    @OneToMany(() => FieldOptions, fieldOptions => fieldOptions.field_id)
+@Entity({name: "form_fields"})
+export class FormFieldsEntity{
+    @PrimaryGeneratedColumn({name: "uuid",})
     @Index()
-    id: UUID
+    id: string
+
+    @ManyToOne(() => FormsEntity, (form) => form.formfields)
+    @JoinColumn({ name: "form_id" })
+    form: FormsEntity;
+
 
     @Column({ nullable: false })
     name: string
@@ -45,25 +54,31 @@ export class FormFields{
 
     @Column({nullable: false , default: false})
     is_required: boolean = false
-}
-
-@Entity()
-export class FieldOptions{
-    @Column({ nullable: false })
-    @ManyToOne(() => FormFields, formsFields => formsFields.id)
+    
+    @Column({ nullable: false, type: "uuid" })
     @Index()
-    field_id: UUID
-
+    field_id: string
+    
     @Column({ nullable: false })
     value: string
+
 }
 
-
-@Entity()
-export class Answers{
-    @Column()
+@Entity("answers")
+export class AnswersEntity{
+    @PrimaryGeneratedColumn("uuid")
     @Index()
-    field_id: UUID
+    id: string
+
+    @ManyToOne(() => FormFieldsEntity, (field) => field.answers)
+    @JoinColumn({ name: "field_id" })
+    field: FormFieldsEntity;
+
+    @Column({type: "uuid", nullable: false})
+    defendant_id: string
+
+    @Column({type: "uuid"})
+    fields_id: string
 
     @Column()
     answer: string
