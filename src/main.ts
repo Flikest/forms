@@ -1,26 +1,34 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from 'dotenv';
+import { config as yamlConfig }  from 'dotenv';
 import { InitConfig } from './config/config';
 import { setupGracefulShutdown } from 'nestjs-graceful-shutdown';
-import { Logger, PinoLogger } from 'nestjs-pino';
-import pino from 'pino';
+import { Logger } from 'nestjs-pino';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-let appconfig: any;
+
 
 async function bootstrap() {
   try{
     const app = await NestFactory.create(AppModule);
-    
+
+    const config = new DocumentBuilder()
+      .setTitle('Analogue Yandex forms API')
+      .setDescription('Simplified analogue of Yandex Forms')
+      .setVersion('1.0')
+      .addTag('Yandex forms')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+
     const argv = process.argv;
   
-    app.useLogger(app.get(Logger))
+    app.useLogger(app.get(Logger));
   
-    //если что это не моя прихать оно таки возврощает any
     let yaml: any;
     yaml = InitConfig(argv.includes("--watch"))
     
-    config(yaml.env_path)
+    yamlConfig(yaml.env_path)
   
     setupGracefulShutdown({ app });
   

@@ -17,10 +17,10 @@ export function InitConfig (isLocal: boolean): any{
     let yamlContent: string
     switch (isLocal) {
         case true:
-            yamlContent = readFileSync("path/to/your/local.yaml", "utf8")
+            yamlContent = readFileSync("config/local.yaml", "utf8")
             return parse(yamlContent)
         case false:
-            yamlContent = readFileSync("path/to/your/prod.yaml", "utf8")
+            yamlContent = readFileSync("config/prod.yaml", "utf8")
             return parse(yamlContent)
         default:
             return new Error("argument not passed")

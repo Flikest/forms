@@ -2,8 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UUID } from "crypto";
 import { PinoLogger } from "nestjs-pino";
-import { title } from "process";
-import { filter } from "rxjs";
 import { FormsEntity } from "src/entity/forms.entity";
 import { DeleteResult, FindOptionsWhere, InsertResult, Repository, UpdateResult } from "typeorm";
 
@@ -35,25 +33,29 @@ export class FormsService{
         };
     };
 
+    async GetMyForms(my_id: string){
+        try{
+            return this.formsRepository.find({
+                where: {
+                    creator_id: my_id
+                }
+            })
+        }catch(error){
+            this.logger.error("error with getting my forms: ", error)
+        }
+    }
+
     async GetForms(filters: {id?: string, title?: string}){
         try{
-            const idReturned: boolean = !!filters.id
-            const titleReturned: boolean = !!filters.title
-
             this.formsRepository.find({
+                relations: {
+                    formfields: true
+                },
                 where: {
                     id: filters.id,
                     title: filters.title
                 },
-                relations: {
-                    formfields: true,
-                }
-            })
-
-            
-            
-
-            
+            });
         }catch(error){
             this.logger.error("error with getting forms: ", error);
         };

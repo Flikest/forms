@@ -3,7 +3,7 @@ import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeor
 
 
 @Entity()
-export class User{
+export class UserEntity{
     @PrimaryGeneratedColumn("uuid")
     @Index()
     id: UUID

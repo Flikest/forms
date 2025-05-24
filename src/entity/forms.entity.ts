@@ -61,25 +61,4 @@ export class FormFieldsEntity{
     
     @Column({ nullable: false })
     value: string
-
-}
-
-@Entity("answers")
-export class AnswersEntity{
-    @PrimaryGeneratedColumn("uuid")
-    @Index()
-    id: string
-
-    @ManyToOne(() => FormFieldsEntity, (field) => field.answers)
-    @JoinColumn({ name: "field_id" })
-    field: FormFieldsEntity;
-
-    @Column({type: "uuid", nullable: false})
-    defendant_id: string
-
-    @Column({type: "uuid"})
-    fields_id: string
-
-    @Column()
-    answer: string
 }

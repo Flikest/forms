@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Param, Patch, Post, Req, Res } from "@nestjs/common";
 import { SsoService } from "./sso.service";
-import { User } from "src/entity/user.entity";
+import { UserEntity } from "src/entity/user.entity";
 import { Request, Response } from "express";
 import { UUID } from "crypto";
 
@@ -12,12 +12,12 @@ export class SsoController{
     ){}
 
     @Post("logup")
-    LogUp(@Body() body: User){
+    LogUp(@Body() body: UserEntity){
         return this.SsoService.CreateUser(body)
     }
 
     @Patch()
-    UpdateUser(@Body() body: User, @Res() res: Response){
+    UpdateUser(@Body() body: UserEntity, @Res() res: Response){
         try{
             res.status(209)
             res.json(this.SsoService.UpdateUser(body))
@@ -29,7 +29,7 @@ export class SsoController{
 
 
     @Post("login")
-    LogIn(@Body() body: User, @Res() res: Response){
+    LogIn(@Body() body: UserEntity, @Res() res: Response){
         try{
             res.status(200)
             res.json(this.SsoService.UserLogIn(body))

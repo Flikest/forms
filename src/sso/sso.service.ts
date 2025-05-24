@@ -1,31 +1,31 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/entity/user.entity";
+import { UserEntity } from "src/entity/user.entity";
 import { InsertResult, Repository } from "typeorm";
-import { compareSync, genSaltSync, hashSync } from "bcrypt-ts";
-import { randomUUID,  UUID } from "crypto";
+import { compareSync, genSaltSync, hashSync } from "bcrypt";
+import { UUID } from "crypto";
 import { sign } from "jsonwebtoken"
 
 @Injectable()
 export class SsoService{
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>
+        @InjectRepository(UserEntity)
+        private userRepository: Repository<UserEntity>
     ){};
 
-    async CreateUser(body: User): Promise<InsertResult>{
+    async CreateUser(body: UserEntity): Promise<InsertResult>{
         const hash = genSaltSync(12);
         body.password = hashSync(body.password, hash);
 
         return await this.userRepository.insert(body);
     };
 
-    async GetUser(id: UUID): Promise<User>{
+    async GetUser(id: UUID): Promise<UserEntity>{
         return await this.userRepository.findOneBy({id: id})
     };
 
-    async UserLogIn(body: User): Promise<Map<string, string>> {
-        const user:User = await this.userRepository.findOneBy(
+    async UserLogIn(body: UserEntity): Promise<Map<string, string>> {
+        const user:UserEntity = await this.userRepository.findOneBy(
             {
                 logIn: body.logIn
             }
@@ -54,8 +54,8 @@ export class SsoService{
         };
     };
 
-    async UpdateUser(body: User){
-        const user: User = await this.userRepository.findOneBy({logIn: body.logIn});
+    async UpdateUser(body: UserEntity){
+        const user: UserEntity = await this.userRepository.findOneBy({logIn: body.logIn});
 
         const isNewPass: boolean = await compareSync(body.password, user.password);
 

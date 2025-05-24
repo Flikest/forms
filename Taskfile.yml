@@ -16,7 +16,7 @@ tasks:
       - echo "{{.RUNNING_TESTS}}"
       - npm run test:spec
       - echo "{{.TESTING_COMPLITED}}"
-      - npm run start:dev
+      - npm run start:dev --env-file тыдыдыдыыдыдыдыд
       - echo "{{.ALL_SERVICES_ARE_RUNNING}}"
   prod-up:
     cmds:
