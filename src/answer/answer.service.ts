@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export type answerRequest = {
     defendant_id: string
     field_id: string
-    answer: string | boolean
+    answer: string
 }
 
 @Injectable()

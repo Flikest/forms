@@ -1,3 +1,0 @@
-env_path: ".env.local"
-httpServer:
-  port: 5000

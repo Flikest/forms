@@ -8,7 +8,7 @@ export class UserEntity{
     @Index()
     id: UUID
 
-    @Column()
+    @Column({unique: true})
     @Index()
     logIn: string
 

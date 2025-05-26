@@ -10,13 +10,12 @@ import { SsoModule } from './sso/sso.module';
 
 @Module({
   imports: [
-    LoggerModule.forRoot(),
+    LoggerModule.forRoot({}),
     GracefulShutdownModule.forRoot(),
     // @ts-ignore
     TypeOrmModule.forRoot({
       ...postgresConnection,
-      entities: [],
-      migrations: ["/entity/"],
+      entities: ["*/**/.entity.ts"],
       synchronize: false,
     }),
     SsoModule,

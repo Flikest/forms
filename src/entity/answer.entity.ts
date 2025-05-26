@@ -16,5 +16,5 @@ export class AnswersEntity{
     fields_id: string
 
     @Column()
-    answer: string | boolean
+    answer: string
 }

@@ -3,8 +3,10 @@ import { postgresConnection } from "./db.connection"
 
 //@ts-ignore
 const AppDataSource = new DataSource({
-    ...postgresConnection
-})
+    ...postgresConnection,
+    entities: [__dirname + "/entity/**/*.entity.{ts,js}"],
+    migrations: ["src/migrations/*.ts"],
+});
 
 AppDataSource.initialize()
     .then(() => {

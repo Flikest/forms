@@ -1,28 +1,14 @@
-import { error } from "console"
-import { AnyARecord } from "dns"
-import { readFileSync } from "fs"
-import { Timestamp } from "rxjs"
-import { parse } from "yaml"
+import { 
+    config, 
+    DotenvConfigOutput 
+} from "dotenv"
 
-export type AppConfig = {
-    env_path: string
-    http_server: {
-        port: number
-        timeout: number
-    }
-}
+export function InitDotenvConfig(): string {
+    const argv: string[] = process.argv
 
-
-export function InitConfig (isLocal: boolean): any{
-    let yamlContent: string
-    switch (isLocal) {
-        case true:
-            yamlContent = readFileSync("config/local.yaml", "utf8")
-            return parse(yamlContent)
-        case false:
-            yamlContent = readFileSync("config/prod.yaml", "utf8")
-            return parse(yamlContent)
-        default:
-            return new Error("argument not passed")
+    if (!argv.includes("--watch")){
+        return ".env.prod"
+    }else{
+        return ".env.local"
     }
 }

@@ -54,6 +54,10 @@ export class SsoService{
         };
     };
 
+    async RefreshTokens(){
+        
+    }
+
     async UpdateUser(body: UserEntity){
         const user: UserEntity = await this.userRepository.findOneBy({logIn: body.logIn});
 

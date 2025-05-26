@@ -1,16 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config as yamlConfig }  from 'dotenv';
-import { InitConfig } from './config/config';
+import { config }  from 'dotenv';
 import { setupGracefulShutdown } from 'nestjs-graceful-shutdown';
 import { Logger } from 'nestjs-pino';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-
+import { InitDotenvConfig } from './config/config';
 
 async function bootstrap() {
+  const envPath = InitDotenvConfig()
+  config(
+    {
+      path: envPath
+    }
+  )
   try{
     const app = await NestFactory.create(AppModule);
+
+    app.useLogger(app.get(Logger));
 
     const config = new DocumentBuilder()
       .setTitle('Analogue Yandex forms API')
@@ -20,19 +26,14 @@ async function bootstrap() {
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
-
-    const argv = process.argv;
-  
-    app.useLogger(app.get(Logger));
-  
-    let yaml: any;
-    yaml = InitConfig(argv.includes("--watch"))
-    
-    yamlConfig(yaml.env_path)
   
     setupGracefulShutdown({ app });
   
-    await app.listen(yaml.port ?? 3000);
+    const port = process.env.APP_PORT ?? 3000 
+
+    await app.listen(port);
+    console.info("server started on port: ", port)
+    
   }catch(error){
     console.error("error with starting app: ", error)
   }
