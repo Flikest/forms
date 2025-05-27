@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FormsService } from './forms.service';
 import { FormsEntity } from 'src/entity/forms.entity';
 import { FormsController } from './forms.controller';
+import { SsoMiddleware } from 'src/sso/sso.middleware';
 
 
 @Module({
@@ -10,4 +11,10 @@ import { FormsController } from './forms.controller';
   controllers: [FormsController],
   providers: [FormsService],
 })
-export class FormsModule {}
+export class FormsModule {
+  configure(consumer: MiddlewareConsumer) {
+        consumer
+          .apply(SsoMiddleware)
+          .forRoutes('*');
+      }
+}

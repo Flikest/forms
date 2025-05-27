@@ -1,8 +1,10 @@
 import { PinoLogger } from "nestjs-pino";
-import { formRequest, FormsService } from "./forms.service";
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
+import { FormsService } from "./forms.service";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
 import { UUID } from "crypto";
-
+import { verify } from "jsonwebtoken"
+import { FormsDto } from "src/dto/foms.dto";
+import { ApiBody } from "@nestjs/swagger";
 
 @Controller("form")
 export class FormsController{
@@ -12,15 +14,22 @@ export class FormsController{
     ){
         logger.setContext(FormsController.name)
     }
-
-
+    @ApiBody({type: [FormsDto]})
     @Post()
-    async CreateForm(@Body() body: formRequest){
+    async CreateForm(@Req() req: Request, @Body() body: FormsDto){
         try{
-            return this.formsService.CreateForm(body)
-        }catch{
-            this.logger.error("error with creating forms")
-            return "incorrect data"
+            const header: string = req.headers["authorization"];
+            const token: string = header.split(" ")[1];
+            const payload = verify(token, process.env.ACCESS_SECRET);
+
+            body.creator_id = payload.id;
+
+            const form = await this.formsService.CreateForm(body);
+            this.logger.info(form)
+            return form
+        }catch(error){
+            this.logger.error(`error with creating forms: ${error}`)
+            return {error: error.message}
         }
     }
 
@@ -35,16 +44,41 @@ export class FormsController{
         }
     }
 
+    @Get("myforms")
+    async GetMyForms(@Req() req: Request){
+        const header: string = req.headers["authorization"];
+        const token: string = header.split(" ")[1];
+        const payload = verify(token, process.env.ACCESS_SECRET);
+        if (!payload){
+            return "Invalid access token"
+        }
+
+        const forms = await this.formsService.GetMyForms(payload.id)
+        
+        return forms
+    };
+
+    @ApiBody({type: [FormsDto]})
     @Put("/:id")
     async UpdateForm(
         @Param("id") id: UUID,
-        @Body() body: formRequest
+        @Req() req: Request,
+        @Body() body: FormsDto
     ){
-
         try{
-            return await this.formsService.UpdateForm(id, body)
+            const header: string = req.headers["authorization"];
+            const token: string = header.split(" ")[1];
+            const payload = verify(token, process.env.ACCESS_SECRET);
+
+            body.creator_id = payload.id;
+
+            const form = await this.formsService.UpdateForm(id, body)
+            if (form.affected === 0){
+                return {error: "the form has not been updated"}
+            }
+            return {message: "form updated successfully"}
         }catch{
-            return "incorrect data"
+            return {error: "incorrect data"}
         }
     }
 
@@ -56,5 +90,4 @@ export class FormsController{
             return "incorrect data"
         }
     }
-
 }

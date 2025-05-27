@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn,  
 } from "typeorm";
 
-export enum formTypes{
+export enum FieldTypes{
     text = "text",
     checkBox = "check box",
     radio = "radio button",
@@ -37,7 +37,7 @@ export class FormsEntity{
 
 @Entity({name: "form_fields"})
 export class FormFieldsEntity{
-    @PrimaryGeneratedColumn({name: "uuid",})
+    @PrimaryGeneratedColumn("uuid")
     @Index()
     id: string
 
@@ -45,19 +45,15 @@ export class FormFieldsEntity{
     @JoinColumn({ name: "form_id" })
     form: FormsEntity;
 
-
     @Column({ nullable: false })
     name: string
 
-    @Column({ nullable: false, enum: formTypes})
-    fieldType: formTypes
+    @Column({ nullable: false, enum: FieldTypes, type: "enum"})
+    fieldType: FieldTypes
 
     @Column({nullable: false , default: false})
     is_required: boolean = false
     
-    @Column({ nullable: false, type: "uuid" })
-    @Index()
-    field_id: string
     
     @Column({ nullable: false })
     value: string

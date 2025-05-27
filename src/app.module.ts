@@ -7,6 +7,9 @@ import { FormFieldsModule } from './form-fields/form-fields.module';
 import { AnswerModule } from './answer/answer.module';
 import { FormsModule } from './forms/forms.module';
 import { SsoModule } from './sso/sso.module';
+import { UserEntity } from './entity/user.entity';
+import { FormFieldsEntity, FormsEntity } from './entity/forms.entity';
+import { AnswersEntity } from './entity/answer.entity';
 
 @Module({
   imports: [
@@ -15,7 +18,7 @@ import { SsoModule } from './sso/sso.module';
     // @ts-ignore
     TypeOrmModule.forRoot({
       ...postgresConnection,
-      entities: ["*/**/.entity.ts"],
+      entities: [UserEntity, FormsEntity, FormFieldsEntity, AnswersEntity],
       synchronize: false,
     }),
     SsoModule,

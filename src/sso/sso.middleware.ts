@@ -15,8 +15,8 @@ export class SsoMiddleware implements NestMiddleware {
         const newRefreshToken: string = await sign(
           {id: verifyRefresh["id"]},
           process.env.REFRESH_SECRET,
-          {expiresIn: '168h'}, 
-        ); 
+          {expiresIn: '168h'},
+        );
 
         const newAccessToken: string = await sign(
           {id: verifyAccess["id"]},
@@ -28,9 +28,7 @@ export class SsoMiddleware implements NestMiddleware {
         res.cookie("y-forms-AccessToken", newAccessToken, {httpOnly: true})
         next();
     }else{
-      // редирект на сраницу авторизации
-      // у меня нету данной страницы, по этому расчитывается что вы запустили приложение через npm run start:prod
-      res.redirect("http://localhost:8080/login/")
+      // TODO: редирект на сраницу авторизации
     }
   }
 }

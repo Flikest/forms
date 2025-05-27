@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PinoLogger } from 'nestjs-pino';
+import { AnswerDto } from 'src/dto/answer.dto';
 import { AnswersEntity } from 'src/entity/answer.entity';
-import { Repository } from 'typeorm';
+import { InsertResult, Repository } from 'typeorm';
 
-export type answerRequest = {
-    defendant_id: string
-    field_id: string
-    answer: string
-}
 
 @Injectable()
 export class AnswerService {
@@ -20,7 +16,7 @@ export class AnswerService {
         logger.setContext(AnswerService.name)
     }
 
-    async SendAnswer(form_id: string, body: answerRequest[]){
+    async SendAnswer(form_id: string, body: AnswerDto[]): Promise<InsertResult>{
         try {
             const answer = body.map(item => ({
                 form_id,
@@ -28,7 +24,7 @@ export class AnswerService {
             }))
             return await this.answerRepository.insert(answer)
         } catch (error) {
-            this.logger.error("error with sanding answer: ", error)
+            this.logger.error("error with sanding answer: ", error.message)
         }
     }
 
@@ -43,6 +39,4 @@ export class AnswerService {
             this.logger.error("error with getting answers: ", error);
         };
     };
-
-
 }

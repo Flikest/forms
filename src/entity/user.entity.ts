@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -6,11 +5,11 @@ import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeor
 export class UserEntity{
     @PrimaryGeneratedColumn("uuid")
     @Index()
-    id: UUID
+    id: string
 
     @Column({unique: true})
     @Index()
-    logIn: string
+    login: string
 
     @Column()
     password: string

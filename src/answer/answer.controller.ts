@@ -5,8 +5,10 @@ import {
     Param, 
     Post 
 } from '@nestjs/common';
-import { answerRequest, AnswerService } from './answer.service';
+import { AnswerService } from './answer.service';
 import { PinoLogger } from 'nestjs-pino';
+import { AnswerDto } from 'src/dto/answer.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('answer')
 export class AnswerController {
@@ -17,16 +19,19 @@ export class AnswerController {
         logger.setContext(AnswerController.name);
     };
 
+    @ApiBody({type: [AnswerDto]})
     @Post("/:form_id")
-    async SendAnswer(@Param("form_id") from_id: string, @Body() body: answerRequest[]){
+    async SendAnswer(@Param("form_id") from_id: string, @Body() body: AnswerDto[]){
         try{
             const answer = await this.answerService.SendAnswer(from_id, body);
             this.logger.debug(answer);
-
-            return answer;
+            if (answer.raw[0] != ""){
+               return {message: "answers sent to the form"};
+            }
+            return {message: "response not sent to form"}
         }catch(error){
             this.logger.error("failed to send answer: ", error);
-            return "failed to send answer";
+            return {error: error.message};
         };
     };
 
@@ -39,7 +44,7 @@ export class AnswerController {
             return answers;
         }catch(error){
             this.logger.error("Unable to get responses to form: ", error);
-            return "Unable to get responses to form";
+            return {error: error.message};
         };
     };
 };

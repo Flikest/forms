@@ -2,11 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UUID } from "crypto";
 import { PinoLogger } from "nestjs-pino";
+import { CreateFormDto, FormsDto } from "src/dto/foms.dto";
 import { FormsEntity } from "src/entity/forms.entity";
-import { DeleteResult, FindOptionsWhere, InsertResult, Repository, UpdateResult } from "typeorm";
+import { DeleteResult, Repository, UpdateResult } from "typeorm";
 
 export type formRequest = {
-    creator_id: UUID
+    creator_id: string
     title: string
     description: string
 };
@@ -22,14 +23,15 @@ export class FormsService{
         this.logger.setContext(FormsService.name);
     };
 
-    async CreateForm(body: formRequest): Promise<InsertResult> {
+    async CreateForm(body: FormsDto): Promise<Object>{
         try{
-            const form = await this.formsRepository.insert(body);
+            const form = await this.formsRepository.save(body);
             this.logger.info(form);
 
             return form;
         }catch(error){
-            this.logger.error("error with creating form: ", error);
+            this.logger.error(`error with creating form: ${error}`);
+            return {error: "incorrect data"}
         };
     };
 
@@ -47,7 +49,7 @@ export class FormsService{
 
     async GetForms(filters: {id?: string, title?: string}){
         try{
-            this.formsRepository.find({
+            return await this.formsRepository.find({
                 relations: {
                     formfields: true
                 },
@@ -58,21 +60,22 @@ export class FormsService{
             });
         }catch(error){
             this.logger.error("error with getting forms: ", error);
+            return {error: error.message}
         };
     };
 
-    async UpdateForm(id: UUID, body: formRequest): Promise<UpdateResult>{
+    async UpdateForm(id: string, body: FormsDto): Promise<UpdateResult>{
         try{
             const result = await this.formsRepository.update(id, body);
-            this.logger.info(result);
-
-            return result;
+            this.logger.debug(result)
+            
+            return result
         }catch(error){
             this.logger.error("error with updating form: ", error);
         };
     };
 
-    async DeleteForm(id: UUID): Promise<DeleteResult>{
+    async DeleteForm(id: string): Promise<DeleteResult>{
         try{
             const result = await this.formsRepository.delete(id);
             this.logger.info(result);
