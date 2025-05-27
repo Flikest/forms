@@ -10,22 +10,12 @@ tasks:
   dev-up:
     cmds:
       - echo "{{.STARTING_MESSAGE}}"
-      - docker-compose --env-file y-forms/.env.dev up -d
-      - echo "create migrations"
-      - npx make_migrate
-      - echo "{{.RUNNING_TESTS}}"
-      - npm run test:spec
-      - echo "{{.TESTING_COMPLITED}}"
-      - npm run start:dev --env-file тыдыдыдыыдыдыдыд
+      - docker-compose --env-file .env.local up -d
+      - npm run start:dev
       - echo "{{.ALL_SERVICES_ARE_RUNNING}}"
   prod-up:
     cmds:
       - echo "{{.STARTING_MESSAGE}}"
-      - docker-compose --env-file y-forms/.env.local up -d
-      - echo "create migrations"
-      - npm run migration:run
-      - echo "{{.RUNNING_TESTS}}"
-      - npm run test:spec
-      - echo "{{.TESTING_COMPLITED}}"
+      - docker-compose --env-file .env.prod up -d
       - npm run start:prod
       - echo "{{.ALL_SERVICES_ARE_RUNNING}}"
