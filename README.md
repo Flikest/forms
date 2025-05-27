@@ -2,7 +2,7 @@
 ```bash
 $ task dev-up
 ```
-чтобы запустить приложение в prod кнфге:  
+чтобы запустить приложение в prod конфиге:  
 ```bash
 $ task prod-up
 ```
@@ -12,7 +12,7 @@ $ task prod-up
 $ docker-compose --env-file .env.local up -d
 $ npm run start:prod
 ```
-чтобы запустить приложение в prod кнфге: 
+чтобы запустить приложение в prod конфиге: 
 ```bash
 $ docker-compose --env-file .env.prod up -d
 $ npm run start:prod
