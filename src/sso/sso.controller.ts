@@ -23,7 +23,7 @@ export class SsoController{
             this.logger.info("response from sso service: ", user)
             res.status(201).json(user)
         } catch (error) {
-            res.status(403).json({error: "failed to create an account"})
+            res.status(403).json({error: error})
         }
     }
 

@@ -1,9 +1,9 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entity/user.entity';
 import { SsoController } from './sso.controller';
 import { SsoService } from './sso.service';
-import { SsoMiddleware } from './sso.middleware';
+
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
@@ -12,8 +12,12 @@ import { SsoMiddleware } from './sso.middleware';
 })
 export class SsoModule {
   configure(consumer: MiddlewareConsumer) {
-        consumer
-          .apply(SsoMiddleware)
-          .forRoutes('*');
-      }
+    consumer
+      .apply(SsoModule)
+      .exclude(
+        { path: '/sso/logup', method: RequestMethod.ALL },
+        { path: '/sso/login', method: RequestMethod.ALL },
+      )
+      .forRoutes('*');
+  }
 }

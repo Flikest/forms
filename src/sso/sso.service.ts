@@ -34,6 +34,7 @@ export class SsoService{
             return user;
         }catch(error){
             this.logger.error(`error with creating user: ${error}`);
+            return {error: error.message}
         };
     };
 
@@ -75,7 +76,7 @@ export class SsoService{
                     const accessToken: string = await sign(
                         {id: user.id},
                         process.env.ACCESS_SECRET,
-                        {expiresIn: '30min'},
+                        {expiresIn: '30m'},
                     );
             
                     return {

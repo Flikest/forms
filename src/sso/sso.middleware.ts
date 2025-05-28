@@ -5,30 +5,43 @@ import { verify, sign } from 'jsonwebtoken'
 @Injectable()
 export class SsoMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
-    const accessToken = req.headers["Authorization"];
-    const refreshToken = req.cookies["Authorization"];
+    try {
+      const accessToken = req.headers["authorization"];
+      const refreshToken = req.headers["refreshToken-authorization"];
 
-    const verifyRefresh = verify(refreshToken, process.env.REFRESH_SECRET);
-    const verifyAccess = verify(accessToken, process.env.ACCESS_SECRET);
+      if (!refreshToken || !accessToken) {
+        return res.redirect('/sso/login');
+      }
 
-    if (verifyRefresh["expiresIn"] > Date.now && verifyAccess["expiresIn"] < Date.now){
+      const verifyRefresh = verify(refreshToken, process.env.REFRESH_SECRET);
+      const verifyAccess = verify(accessToken, process.env.ACCESS_SECRET);
+
+      const now = Date.now();
+
+      if (
+        verifyRefresh["expiresIn"] > now && verifyAccess["expiresIn"] < now
+      ) {
         const newRefreshToken: string = await sign(
-          {id: verifyRefresh["id"]},
+          { id: verifyRefresh["id"] },
           process.env.REFRESH_SECRET,
-          {expiresIn: '168h'},
+          { expiresIn: '168h' }
         );
 
         const newAccessToken: string = await sign(
-          {id: verifyAccess["id"]},
+          { id: verifyAccess["id"] },
           process.env.ACCESS_SECRET,
-          {expiresIn: '30min'},
+          { expiresIn: '30m' }
         );
 
-        res.cookie("y-forms-RefreshToken", newRefreshToken, {httpOnly: true})
-        res.cookie("y-forms-AccessToken", newAccessToken, {httpOnly: true})
-        next();
-    }else{
-      // TODO: редирект на сраницу авторизации
+        res.cookie("y-forms-RefreshToken", newRefreshToken, { httpOnly: true });
+        res.cookie("y-forms-AccessToken", newAccessToken, { httpOnly: true });
+        return next();
+      } else {
+        return res.redirect('/sso/login');
+      }
+    } catch (err) {
+      console.error('error witn Ssomiddleware:', err);
+      return res.redirect('/login');
     }
   }
 }

@@ -17,6 +17,10 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     app.useLogger(app.get(Logger));
+    app.use((err, req, res, next) => {
+      console.error(err.stack);
+      res.status(500).json({ error: err.message });
+    });
 
     const config = new DocumentBuilder()
       .setTitle('Analogue Yandex forms API')
